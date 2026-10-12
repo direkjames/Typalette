@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Typallete</title>
-<meta name="description" content="Typallete: mix and match free font pairings from Google Fonts and Fontshare with your own colors.">
+<title>Typalette</title>
+<meta name="description" content="Typalette: mix and match free font pairings from Google Fonts and Fontshare with your own colors.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Instrument+Serif:ital@1&family=Manrope:wght@400..700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -254,7 +254,7 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);color:v
 
   <div class="notice" id="fsNotice" hidden>
     <span aria-hidden="true">●</span>
-    <span>Fontshare fonts can't load in this preview window, so they show a stand-in font here. They load normally once Typallete is on your own site, like GitHub Pages.</span>
+    <span>Fontshare fonts can't load in this preview window, so they show a stand-in font here. They load normally once Typalette is on your own site, like GitHub Pages.</span>
   </div>
 
   <div class="studio">
@@ -339,7 +339,7 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);color:v
   </section>
 
   <footer>
-    <span>Typallete · fonts from <a href="https://fonts.google.com" target="_blank" rel="noopener">Google Fonts</a> and <a href="https://www.fontshare.com" target="_blank" rel="noopener">Fontshare</a></span>
+    <span>Typalette · fonts from <a href="https://fonts.google.com" target="_blank" rel="noopener">Google Fonts</a> and <a href="https://www.fontshare.com" target="_blank" rel="noopener">Fontshare</a></span>
     <span>Check each font's license page before using it in a product.</span>
   </footer>
 </div>
@@ -577,7 +577,7 @@ function render(opts){
   var tok=token(S);
   try{history.replaceState(null,'','#'+tok);}catch(e){}
   $('linkOut').value=baseURL()+'#'+tok;
-  sset('typallete.last',tok);
+  sset('typalette.last',tok);
 }
 function pill(id,r,isAccent){
   var el=$(id),t;
@@ -611,8 +611,8 @@ function parse(t){
 function baseURL(){try{return location.href.split('#')[0];}catch(e){return '';}}
 
 /* favorites */
-function favs(){try{return JSON.parse(sget('typallete.favs')||'[]');}catch(e){return [];}}
-function setFavs(a){sset('typallete.favs',JSON.stringify(a));}
+function favs(){try{return JSON.parse(sget('typalette.favs')||'[]');}catch(e){return [];}}
+function setFavs(a){sset('typalette.favs',JSON.stringify(a));}
 function findFav(){var t=token(S);return favs().findIndex(function(f){return f.t===t;});}
 var cmp=[];
 function renderFavs(){
@@ -712,7 +712,7 @@ $('cmpArea').addEventListener('click',function(e){if(e.target.id==='clearCmp'){c
 
 /* boot: link > last session > defaults */
 var start=null;try{start=parse(location.hash);}catch(e){}
-if(!start)start=parse(sget('typallete.last')||'');
+if(!start)start=parse(sget('typalette.last')||'');
 if(start)Object.assign(S,start);
 renderFilters();renderLib();render();renderFavs();
 })();
