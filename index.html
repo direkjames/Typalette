@@ -85,6 +85,43 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .pill.bad .st::before{background:var(--warn)}
 .pill.bad{border-color:#5b3a2e}
 .small{font-size:12px;color:var(--fg-3);margin:0}
+.small:empty{display:none}
+
+/* font picker */
+.fpick{flex:1;display:flex;align-items:center;gap:8px;height:44px;padding:0 10px 0 12px;border-radius:10px;border:1px solid var(--line-2);background:var(--ink);text-align:left;min-width:0}
+.fpick:hover{border-color:var(--fg-3)}
+.fpick[aria-expanded="true"]{border-color:var(--accent)}
+.fp-name{flex:1;font-size:19px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.fp-src{font:500 10.5px var(--f-mono);color:var(--fg-3);white-space:nowrap}
+.chev{width:16px;height:16px;color:var(--fg-3);flex:none}
+.picker .lock{height:44px;width:44px}
+.fmenu{border:1px solid var(--line-2);background:var(--ink);border-radius:12px;padding:8px;display:grid;gap:8px}
+.fmenu .text{height:36px;font-size:13px;background:var(--panel)}
+.fcats{display:flex;flex-wrap:wrap;gap:4px}
+.fcats .chip{padding:3px 9px;font-size:12px}
+.flist{max-height:320px;overflow:auto;display:grid;gap:1px;scrollbar-width:thin;overscroll-behavior:contain}
+.fgrp{font:500 10.5px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-3);padding:10px 8px 4px}
+.fopt{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;min-width:0}
+.fopt:hover,.fopt:focus{background:var(--raise);outline:none}
+.fopt:focus-visible{box-shadow:inset 0 0 0 2px var(--accent)}
+.fopt[aria-selected="true"]{background:var(--accent-soft)}
+.fopt .n{font-size:20px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;color:var(--fg)}
+.fopt .t{font:500 10.5px var(--f-mono);color:var(--fg-3);white-space:nowrap}
+.fopt[aria-selected="true"] .t{color:var(--accent)}
+.fnone{padding:14px 8px;color:var(--fg-2);font-size:13px}
+
+/* your fonts */
+.drop{display:flex;gap:12px;align-items:center;border:1px dashed var(--line-2);border-radius:12px;padding:14px;cursor:pointer;font-size:13px;color:var(--fg-2);transition:border-color .15s,background .15s}
+.drop b{color:var(--fg)}
+.drop svg{width:22px;height:22px;flex:none;color:var(--accent)}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.ulist{display:grid;gap:6px}
+.ulist:empty{display:none}
+.urow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 8px;align-items:center;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.urow .n{font-size:19px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.urow .m{grid-column:1/-1;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.urow .m span{font:500 10.5px var(--f-mono);color:var(--fg-3);margin-right:auto}
 
 /* stage */
 .main{display:grid;gap:14px;min-width:0}
@@ -235,7 +272,7 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);color:v
 <div class="wrap">
   <header class="top">
     <div class="brand">
-      <h1 class="logo"><span class="a">Typ</span><span class="b">allete</span></h1>
+      <h1 class="logo"><span class="a">Typ</span><span class="b">alette</span></h1>
       <p class="tag">Mix free fonts and colors until it feels right.</p>
     </div>
     <div class="actions">
@@ -261,18 +298,31 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);color:v
     <aside class="rail" aria-label="Controls">
       <div class="group">
         <div class="ghead"><p class="label">Fonts</p><span class="small">Lock one, shuffle the other</span></div>
-        <label class="field"><span>Heading</span>
-          <div class="row"><select id="hSel"></select>
-          <button class="lock" id="hLock" aria-pressed="false" aria-label="Lock heading font"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button></div>
-        </label>
-        <label class="field"><span>Body</span>
-          <div class="row"><select id="bSel"></select>
-          <button class="lock" id="bLock" aria-pressed="false" aria-label="Lock body font"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button></div>
-        </label>
+        <div class="field picker" data-role="h"><span id="hLbl">Heading</span>
+          <div class="row"><button class="fpick" id="hPick" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="hLbl hPick"><span class="fp-name"></span><span class="fp-src"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+          <button class="lock" id="hLock" type="button" aria-pressed="false" aria-label="Lock heading font"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button></div>
+          <div class="fmenu" id="hMenu" hidden></div>
+        </div>
+        <div class="field picker" data-role="b"><span id="bLbl">Body</span>
+          <div class="row"><button class="fpick" id="bPick" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bLbl bPick"><span class="fp-name"></span><span class="fp-src"></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+          <button class="lock" id="bLock" type="button" aria-pressed="false" aria-label="Lock body font"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></button></div>
+          <div class="fmenu" id="bMenu" hidden></div>
+        </div>
         <div class="row">
           <label class="field" style="flex:1"><span>Heading weight</span><select id="hwSel"></select></label>
           <label class="field" style="flex:1"><span>Body weight</span><select id="bwSel"></select></label>
         </div>
+      </div>
+
+      <div class="group" id="yours">
+        <div class="ghead"><p class="label">Your fonts</p><span class="small">Stays in this browser</span></div>
+        <label class="drop" id="drop">
+          <input type="file" id="fontFile" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" multiple class="sr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 21h14"/></svg>
+          <span><b>Add font files</b><br>Drop or choose .ttf, .otf, .woff or .woff2</span>
+        </label>
+        <p class="small" id="dropMsg" role="status"></p>
+        <div class="ulist" id="ulist"></div>
       </div>
 
       <div class="group">
@@ -334,7 +384,7 @@ footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--line);color:v
       <div class="cbox"><header><span class="label">Add to &lt;head&gt;</span><button class="mini-btn" data-copy="codeHead">Copy</button></header><pre id="codeHead"></pre></div>
       <div class="cbox"><header><span class="label">CSS</span><button class="mini-btn" data-copy="codeCss">Copy</button></header><pre id="codeCss"></pre></div>
       <div class="cbox share"><header><span class="label">Share link</span><button class="mini-btn" id="copyLink">Copy</button></header>
-        <div class="row"><input class="text" id="linkOut" readonly aria-label="Share link"></div></div>
+        <div class="row" style="flex-wrap:wrap"><input class="text" id="linkOut" readonly aria-label="Share link"><p class="small" id="shareNote" style="flex-basis:100%"></p></div></div>
     </div>
   </section>
 
@@ -468,7 +518,7 @@ function sset(k,v){mem[k]=v;try{localStorage.setItem(k,v);}catch(e){}}
 
 /* font loading */
 var loaded={};
-function stack(f){return '"'+f.fam+'", '+FB[f.cat];}
+function stack(f){return '"'+(f.css||f.fam)+'", '+FB[f.cat];}
 function axis(f){if(f.v)return ':wght@400..700';if(f.w.length===1&&f.w[0]===400)return '';return ':wght@'+f.w.join(';');}
 function gURL(list){return 'https://fonts.googleapis.com/css2?'+list.map(function(f){return 'family='+f.fam.replace(/ /g,'+')+axis(f);}).join('&')+'&display=swap';}
 function fURL(list){return 'https://api.fontshare.com/v2/css?'+list.map(function(f){return 'f[]='+f.id+'@'+f.w.join(',');}).join('&')+'&display=swap';}
@@ -476,7 +526,7 @@ function addLink(href){var l=document.createElement('link');l.rel='stylesheet';l
 var fsWarned=false;
 function fsFail(){if(fsWarned)return;fsWarned=true;$('fsNotice').hidden=false;}
 function ensure(ids){
-  var need=ids.map(function(i){return byId[i];}).filter(function(f){return f&&!loaded[f.id];});
+  var need=ids.map(function(i){return byId[i];}).filter(function(f){return f&&f.src!=='u'&&!loaded[f.id];});
   if(!need.length)return;
   need.forEach(function(f){loaded[f.id]=1;});
   var gs=need.filter(function(f){return f.src==='g';}),fs=need.filter(function(f){return f.src==='f';});
@@ -492,8 +542,8 @@ function ratio(a,b){var x=lum(a),y=lum(b);return (Math.max(x,y)+0.05)/(Math.min(
 function onColor(ac){return ratio(ac,'#111111')>=ratio(ac,'#ffffff')?'#111111':'#ffffff';}
 function nearW(f,w){return f.w.reduce(function(p,c){return Math.abs(c-w)<Math.abs(p-w)?c:p;},f.w[0]);}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function srcName(f){return f.src==='g'?'Google Fonts':'Fontshare';}
-function fontLink(f){return f.src==='g'?'https://fonts.google.com/specimen/'+f.fam.replace(/ /g,'+'):'https://www.fontshare.com/fonts/'+f.id;}
+function srcName(f){return f.src==='g'?'Google Fonts':f.src==='f'?'Fontshare':'Your font';}
+function fontLink(f){return f.src==='g'?'https://fonts.google.com/specimen/'+f.fam.replace(/ /g,'+'):f.src==='f'?'https://www.fontshare.com/fonts/'+f.id:'';}
 
 function varsFor(st){
   var h=byId[st.h],b=byId[st.b];
@@ -532,15 +582,186 @@ function preview(){
 }
 
 /* controls setup */
-function fillFontSelect(sel){
-  var groups={g:'Google Fonts',f:'Fontshare'},html='';
-  ['f','g'].forEach(function(src){
-    html+='<optgroup label="'+groups[src]+'">';
-    FONTS.filter(function(f){return f.src===src;}).slice().sort(function(a,b){return a.fam.localeCompare(b.fam);}).forEach(function(f){html+='<option value="'+f.id+'">'+esc(f.fam)+'</option>';});
-    html+='</optgroup>';
-  });
-  sel.innerHTML=html;
+/* font picker: every name is drawn in its own typeface */
+var CATN={sans:'Sans',serif:'Serif',display:'Display',mono:'Mono'};
+var PK={h:{q:'',cat:'all'},b:{q:'',cat:'all'}};
+var allLoaded=false;
+function openPicker(role){
+  var other=role==='h'?'b':'h';closePicker(other,false);
+  if(!allLoaded){allLoaded=true;ensure(FONTS.map(function(f){return f.id;}));}
+  var m=$(role+'Menu');m.hidden=false;$(role+'Pick').setAttribute('aria-expanded','true');
+  m.innerHTML='<input class="text" id="'+role+'Q" type="search" placeholder="Search fonts" aria-label="Search '+(role==='h'?'heading':'body')+' fonts" autocomplete="off" value="'+esc(PK[role].q)+'">'+
+    '<div class="fcats" id="'+role+'Cats"></div><div class="flist" role="listbox" id="'+role+'List" aria-label="'+(role==='h'?'Heading':'Body')+' fonts"></div>';
+  drawCats(role);drawList(role);
+  var q=$(role+'Q');q.focus();
+  q.addEventListener('input',function(){PK[role].q=this.value;drawList(role);});
+  q.addEventListener('keydown',function(e){if(e.key==='ArrowDown'){e.preventDefault();var o=$(role+'List').querySelector('.fopt');if(o)o.focus();}else if(e.key==='Escape'){closePicker(role,true);}else if(e.key==='Enter'){e.preventDefault();var o2=$(role+'List').querySelector('.fopt');if(o2)choose(role,o2.dataset.id);}});
+  var sel=$(role+'List').querySelector('[aria-selected="true"]');if(sel)sel.scrollIntoView({block:'nearest'});
 }
+function closePicker(role,focusBtn){var m=$(role+'Menu');if(m.hidden)return;m.hidden=true;m.innerHTML='';$(role+'Pick').setAttribute('aria-expanded','false');if(focusBtn)$(role+'Pick').focus();}
+function drawCats(role){
+  var cats=['all','sans','serif','display','mono'];if(FONTS.some(function(f){return f.src==='u';}))cats.push('yours');
+  $(role+'Cats').innerHTML=cats.map(function(c){return '<button type="button" class="chip" data-cat="'+c+'" aria-pressed="'+(PK[role].cat===c)+'">'+(c==='all'?'All':c==='yours'?'Yours':CATN[c])+'</button>';}).join('');
+  $(role+'Cats').onclick=function(e){var c=e.target.closest('.chip');if(!c)return;PK[role].cat=c.dataset.cat;drawCats(role);drawList(role);};
+}
+function drawList(role){
+  var q=PK[role].q.trim().toLowerCase(),cat=PK[role].cat,cur=S[role];
+  var list=FONTS.filter(function(f){
+    if(cat==='yours'&&f.src!=='u')return false;
+    if(cat!=='all'&&cat!=='yours'&&f.cat!==cat)return false;
+    return !q||f.fam.toLowerCase().indexOf(q)>=0;
+  });
+  var html='';
+  [['u','Your fonts'],['f','Fontshare'],['g','Google Fonts']].forEach(function(g){
+    var items=list.filter(function(f){return f.src===g[0];}).sort(function(a,b){return a.fam.localeCompare(b.fam);});
+    if(!items.length)return;
+    html+='<div class="fgrp" role="presentation">'+g[1]+'</div>';
+    items.forEach(function(f){
+      html+='<div class="fopt" role="option" tabindex="-1" data-id="'+f.id+'" aria-selected="'+(f.id===cur)+'"><span class="n" style="font-family:'+esc(stack(f))+';font-weight:'+nearW(f,role==='h'?600:400)+'">'+esc(f.fam)+'</span><span class="t">'+(f.src==='u'?'Yours':CATN[f.cat])+'</span></div>';
+    });
+  });
+  var el=$(role+'List');
+  el.innerHTML=html||'<div class="fnone">No fonts match “'+esc(PK[role].q)+'”.</div>';
+  el.onclick=function(e){var o=e.target.closest('.fopt');if(o)choose(role,o.dataset.id);};
+  el.onkeydown=function(e){
+    var o=e.target.closest('.fopt');if(!o)return;
+    var opts=Array.prototype.slice.call(el.querySelectorAll('.fopt')),i=opts.indexOf(o);
+    if(e.key==='ArrowDown'){e.preventDefault();(opts[i+1]||o).focus();}
+    else if(e.key==='ArrowUp'){e.preventDefault();if(i===0)$(role+'Q').focus();else opts[i-1].focus();}
+    else if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(role,o.dataset.id);}
+    else if(e.key==='Escape'){closePicker(role,true);}
+  };
+}
+function choose(role,id){S[role]=id;if(role==='h')S.hw=nearW(byId[id],S.hw);closePicker(role,true);render();}
+function updatePickers(){
+  ['h','b'].forEach(function(role){
+    var f=byId[S[role]],btn=$(role+'Pick');
+    var n=btn.querySelector('.fp-name');n.textContent=f.fam;n.style.fontFamily=stack(f);n.style.fontWeight=role==='h'?S.hw:S.bw;
+    btn.querySelector('.fp-src').textContent=f.src==='g'?'Google':f.src==='f'?'Fontshare':'Yours';
+    if(!$(role+'Menu').hidden)drawList(role);
+  });
+}
+['h','b'].forEach(function(role){
+  $(role+'Pick').addEventListener('click',function(){if($(role+'Menu').hidden)openPicker(role);else closePicker(role,false);});
+  $(role+'Pick').addEventListener('keydown',function(e){if(e.key==='ArrowDown'&&$(role+'Menu').hidden){e.preventDefault();openPicker(role);}});
+});
+document.addEventListener('click',function(e){['h','b'].forEach(function(role){var p=$(role+'Pick').closest('.picker');if(!p.contains(e.target))closePicker(role,false);});});
+
+/* personal fonts: parsed in the browser, kept in IndexedDB, never uploaded */
+var UFILES=[],registered={};
+var WEIGHT_WORDS=[['hairline',100],['thin',100],['extralight',200],['ultralight',200],['semibold',600],['demibold',600],['extrabold',800],['ultrabold',800],['light',300],['regular',400],['book',400],['normal',400],['medium',500],['bold',700],['heavy',900],['black',900]];
+function readTag(dv,o){return String.fromCharCode(dv.getUint8(o),dv.getUint8(o+1),dv.getUint8(o+2),dv.getUint8(o+3));}
+function parseSfnt(buf){
+  try{
+    var dv=new DataView(buf),sig=dv.getUint32(0);
+    if(!(sig===0x00010000||sig===0x4F54544F||sig===0x74727565))return null;
+    var n=dv.getUint16(4),T={},i,r={};
+    for(i=0;i<n;i++){var o=12+i*16;T[readTag(dv,o)]={off:dv.getUint32(o+8),len:dv.getUint32(o+12)};}
+    if(T['OS/2']){var o2=T['OS/2'].off;r.weight=dv.getUint16(o2+4);if(T['OS/2'].len>63)r.italic=!!(dv.getUint16(o2+62)&1);}
+    if(T.fvar){var fv=T.fvar.off,ao=dv.getUint16(fv+4),ac=dv.getUint16(fv+8),as=dv.getUint16(fv+10);
+      for(i=0;i<ac;i++){var p=fv+ao+i*as;if(readTag(dv,p)==='wght'){r.min=Math.round(dv.getInt32(p+4)/65536);r.max=Math.round(dv.getInt32(p+12)/65536);}}}
+    if(T.name){var nm=T.name.off,cnt=dv.getUint16(nm+2),so=nm+dv.getUint16(nm+4),best={};
+      for(i=0;i<cnt;i++){var rec=nm+6+i*12,pid=dv.getUint16(rec),lid=dv.getUint16(rec+4),nid=dv.getUint16(rec+6),len=dv.getUint16(rec+8),off=dv.getUint16(rec+10),s='',j;
+        if(nid!==1&&nid!==16)continue;
+        if(pid===3||pid===0){for(j=0;j+1<len;j+=2)s+=String.fromCharCode(dv.getUint16(so+off+j));}
+        else if(pid===1){for(j=0;j<len;j++)s+=String.fromCharCode(dv.getUint8(so+off+j));}else continue;
+        s=s.replace(/\0/g,'').trim();if(!s)continue;
+        if(!best[nid]||(pid===3&&lid===0x409))best[nid]=s;}
+      r.family=best[16]||best[1];}
+    return r;
+  }catch(e){return null;}
+}
+function fromName(file){
+  var base=file.replace(/\.[^.]+$/,''),low=base.toLowerCase().replace(/[^a-z]/g,''),r={};
+  r.italic=/italic|oblique/i.test(base);
+  if(/variable|\bvf\b|\[wght/i.test(base)){r.min=100;r.max=900;}
+  for(var i=0;i<WEIGHT_WORDS.length;i++){if(low.indexOf(WEIGHT_WORDS[i][0])>=0){r.weight=WEIGHT_WORDS[i][1];break;}}
+  var fam=base.replace(/\[.*?\]/g,'').split(/[-_ ]/)[0]||base;
+  fam=fam.replace(/(variable|vf)$/i,'').replace(/([a-z])([A-Z])/g,'$1 $2').trim();
+  r.family=fam||base;
+  return r;
+}
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'font';}
+function fmtOf(name){var e=name.split('.').pop().toLowerCase();return {ttf:'truetype',otf:'opentype',woff:'woff',woff2:'woff2'}[e]||'';}
+function rebuildUser(){
+  for(var i=FONTS.length-1;i>=0;i--)if(FONTS[i].src==='u'){delete byId[FONTS[i].id];FONTS.splice(i,1);}
+  var fams={};
+  UFILES.forEach(function(u){
+    var id='u-'+slug(u.family);
+    var f=fams[id]||(fams[id]={id:id,fam:u.family,src:'u',cat:'sans',v:false,w:[],files:[],css:''});
+    f.files.push(u);
+  });
+  Object.keys(fams).forEach(function(id){
+    var f=fams[id],uprights=f.files.filter(function(u){return !u.italic;}),use=uprights.length?uprights:f.files,ws={};
+    var clash=FONTS.some(function(x){return x.fam.toLowerCase()===f.fam.toLowerCase();});
+    f.css=clash?f.fam+' (yours)':f.fam;
+    use.forEach(function(u){
+      if(u.min!=null){for(var w=100;w<=900;w+=100)if(w>=u.min&&w<=u.max)ws[w]=1;}
+      else ws[Math.min(900,Math.max(100,Math.round((u.weight||400)/100)*100))]=1;
+    });
+    f.w=Object.keys(ws).map(Number).sort(function(a,b){return a-b;});if(!f.w.length)f.w=[400];
+    f.files.forEach(function(u){
+      var style=(u.italic&&uprights.length)?'italic':'normal';
+      var desc=u.min!=null?u.min+' '+u.max:String(Math.round((u.weight||400)/100)*100);
+      var rk=u.key+'|'+f.css+'|'+style;if(registered[rk])return;registered[rk]=1;
+      try{var ff=new FontFace(f.css,u.data,{weight:desc,style:style});ff.load().then(function(x){document.fonts.add(x);var stg=$('stage');stg.style.opacity='.999';requestAnimationFrame(function(){stg.style.opacity='';});}).catch(function(){showDrop('Couldn’t read '+u.name+'. Try a .ttf or .otf version.',true);});}catch(e){}
+    });
+    FONTS.push(f);byId[f.id]=f;
+  });
+  if(!byId[S.h])S.h=DEF.h;if(!byId[S.b])S.b=DEF.b;
+  renderUser();
+}
+function renderUser(){
+  var mine=FONTS.filter(function(f){return f.src==='u';});
+  $('ulist').innerHTML=mine.map(function(f){
+    return '<div class="urow"><span class="n" style="font-family:'+esc(stack(f))+'">'+esc(f.fam)+'</span><span></span><div class="m"><span>'+f.files.length+' file'+(f.files.length>1?'s':'')+' · '+f.w.map(function(w){return w;}).join(', ')+'</span>'+
+      '<button type="button" class="mini-btn" data-u="h" data-id="'+f.id+'">Heading</button><button type="button" class="mini-btn" data-u="b" data-id="'+f.id+'">Body</button><button type="button" class="mini-btn" data-u="rm" data-id="'+f.id+'" aria-label="Remove '+esc(f.fam)+'">Remove</button></div></div>';
+  }).join('');
+}
+function showDrop(msg,bad){var m=$('dropMsg');m.textContent=msg;m.style.color=bad?'var(--warn)':'';}
+
+/* IndexedDB, with an in-memory fallback */
+function idb(){return new Promise(function(res,rej){try{var r=indexedDB.open('typalette',1);r.onupgradeneeded=function(){r.result.createObjectStore('fonts',{keyPath:'key'});};r.onsuccess=function(){res(r.result);};r.onerror=function(){rej(r.error);};}catch(e){rej(e);}});}
+function idbAll(){return idb().then(function(d){return new Promise(function(res){var out=[];var q=d.transaction('fonts').objectStore('fonts').openCursor();q.onsuccess=function(){var c=q.result;if(c){out.push(c.value);c.continue();}else res(out);};q.onerror=function(){res(out);};});}).catch(function(){return [];});}
+function idbPut(rec){return idb().then(function(d){return new Promise(function(res){var t=d.transaction('fonts','readwrite');t.objectStore('fonts').put(rec);t.oncomplete=function(){res(true);};t.onerror=function(){res(false);};});}).catch(function(){return false;});}
+function idbDel(key){return idb().then(function(d){var t=d.transaction('fonts','readwrite');t.objectStore('fonts').delete(key);}).catch(function(){});}
+
+function addFiles(files){
+  var ok=[],bad=[];
+  var jobs=Array.prototype.map.call(files,function(file){
+    if(!fmtOf(file.name)){bad.push(file.name);return Promise.resolve();}
+    if(file.size>15*1024*1024){bad.push(file.name+' (too large)');return Promise.resolve();}
+    return file.arrayBuffer().then(function(buf){
+      var info=parseSfnt(buf)||{},fb=fromName(file.name);
+      var rec={key:file.name+'|'+file.size,name:file.name,family:(info.family||fb.family).slice(0,60),weight:info.weight||fb.weight||400,italic:info.italic!=null?info.italic:fb.italic,min:info.min!=null?info.min:fb.min,max:info.max!=null?info.max:fb.max,data:buf};
+      if(rec.min==null){delete rec.min;delete rec.max;}
+      UFILES=UFILES.filter(function(u){return u.key!==rec.key;});UFILES.push(rec);ok.push(rec);
+      return idbPut(rec);
+    }).catch(function(){bad.push(file.name);});
+  });
+  Promise.all(jobs).then(function(){
+    rebuildUser();
+    if(ok.length){var fam=ok[0].family,id='u-'+slug(fam);
+      if(!S.lockH&&byId[id]){S.h=id;S.hw=nearW(byId[id],S.hw);}
+      render();renderFavs();
+      showDrop(bad.length?'Added '+ok.length+'. Skipped: '+bad.join(', ')+'.':'',!!bad.length);
+      toast('Added '+fam+(S.h===id?' as your heading':''));
+    }else if(bad.length)showDrop('Couldn’t add '+bad.join(', ')+'. Use .ttf, .otf, .woff or .woff2 files.',true);
+    $('fontFile').value='';
+  });
+}
+$('fontFile').addEventListener('change',function(){if(this.files&&this.files.length)addFiles(this.files);});
+['dragenter','dragover'].forEach(function(ev){$('drop').addEventListener(ev,function(e){e.preventDefault();$('drop').classList.add('over');});});
+['dragleave','drop'].forEach(function(ev){$('drop').addEventListener(ev,function(e){e.preventDefault();$('drop').classList.remove('over');});});
+$('drop').addEventListener('drop',function(e){if(e.dataTransfer&&e.dataTransfer.files.length)addFiles(e.dataTransfer.files);});
+$('ulist').addEventListener('click',function(e){
+  var b=e.target.closest('[data-u]');if(!b)return;var id=b.dataset.id,f=byId[id];if(!f)return;
+  if(b.dataset.u==='rm'){
+    f.files.forEach(function(u){idbDel(u.key);});
+    UFILES=UFILES.filter(function(u){return f.files.indexOf(u)<0;});
+    rebuildUser();render();renderFavs();toast('Removed '+f.fam);
+  }else{S[b.dataset.u]=id;if(b.dataset.u==='h')S.hw=nearW(f,S.hw);else S.bw=nearW(f,400);render();}
+});
 function fillWeights(sel,f,val){sel.innerHTML=f.w.map(function(w){return '<option value="'+w+'"'+(w===val?' selected':'')+'>'+WN[w]+' '+w+'</option>';}).join('');}
 
 var lastView=null,lastText=null;
@@ -554,7 +775,7 @@ function render(opts){
   var key=S.view+'|'+S.head+'|'+S.body+'|'+S.brand+'|'+(S.view==='spec'?S.h+S.b+S.hw+S.bw:'');
   if(key!==lastText){stage.innerHTML=preview();lastText=key;}
   // controls
-  $('hSel').value=S.h;$('bSel').value=S.b;
+  updatePickers();
   fillWeights($('hwSel'),h,S.hw);fillWeights($('bwSel'),b,S.bw);
   $('hLock').setAttribute('aria-pressed',S.lockH);$('bLock').setAttribute('aria-pressed',S.lockB);
   $('scale').value=S.scale;$('scaleOut').textContent=Math.round(S.scale*100)+'%';
@@ -567,7 +788,7 @@ function render(opts){
   // contrast
   pill('cText',ratio(S.fg,S.bg),false);pill('cAcc',ratio(S.ac,S.bg),true);
   // info
-  $('info').innerHTML=[['Heading',h,S.hw],['Body',b,S.bw]].map(function(r){return '<div class="fi"><div><div class="mt">'+r[0]+' · '+srcName(r[1])+'</div><div class="nm" style="font-family:'+esc(stack(r[1]))+';font-weight:'+r[2]+'">'+esc(r[1].fam)+'</div></div><a href="'+fontLink(r[1])+'" target="_blank" rel="noopener">View font ↗</a></div>';}).join('');
+  $('info').innerHTML=[['Heading',h,S.hw],['Body',b,S.bw]].map(function(r){return '<div class="fi"><div><div class="mt">'+r[0]+' · '+srcName(r[1])+'</div><div class="nm" style="font-family:'+esc(stack(r[1]))+';font-weight:'+r[2]+'">'+esc(r[1].fam)+'</div></div>'+(fontLink(r[1])?'<a href="'+fontLink(r[1])+'" target="_blank" rel="noopener">View font ↗</a>':'<span class="mt">In this browser</span>')+'</div>';}).join('');
   var pr=PAIRS.filter(function(p){return p[1]===S.h&&p[2]===S.b;})[0];
   $('pairName').textContent=pr?'Curated pairing: '+pr[0]:'Your own mix';
   Array.prototype.forEach.call(document.querySelectorAll('.card'),function(c){c.setAttribute('aria-current',c.dataset.h===S.h&&c.dataset.b===S.b);});
@@ -592,8 +813,18 @@ function code(){
   var gs=list.filter(function(f){return f.src==='g';}),fs=list.filter(function(f){return f.src==='f';}),head=[];
   if(gs.length){head.push('<link rel="preconnect" href="https://fonts.googleapis.com">','<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>','<link rel="stylesheet" href="'+gURL(gs)+'">');}
   if(fs.length){head.push('<link rel="stylesheet" href="'+fURL(fs)+'">');}
+  var us=list.filter(function(f){return f.src==='u';}),faces='';
+  if(us.length){
+    if(!head.length)head.push('<!-- Nothing to add here: your own fonts are loaded in the CSS below. -->');
+    us.forEach(function(f){f.files.forEach(function(u){
+      var w=u.min!=null?u.min+' '+u.max:Math.round((u.weight||400)/100)*100;
+      faces+='@font-face {\n  font-family: "'+f.css+'";\n  src: url("fonts/'+u.name+'") format("'+fmtOf(u.name)+'");\n  font-weight: '+w+';\n  font-style: '+(u.italic&&f.files.some(function(x){return !x.italic;})?'italic':'normal')+';\n  font-display: swap;\n}\n\n';
+    });});
+    faces='/* Put your font files in a folder named "fonts" next to this page. */\n'+faces;
+  }
   $('codeHead').textContent=head.join('\n');
-  $('codeCss').textContent=':root {\n  --font-heading: '+stack(h)+';\n  --font-body: '+stack(b)+';\n  --color-bg: '+S.bg+';\n  --color-text: '+S.fg+';\n  --color-accent: '+S.ac+';\n}\n\nbody {\n  background: var(--color-bg);\n  color: var(--color-text);\n  font-family: var(--font-body);\n  font-weight: '+S.bw+';\n  line-height: '+S.lh+';\n  font-size: '+Math.round(17*S.scale)+'px;\n}\n\nh1, h2, h3 {\n  font-family: var(--font-heading);\n  font-weight: '+S.hw+';\n  letter-spacing: '+S.track+'em;\n  line-height: 1.06;\n}\n\na, .accent { color: var(--color-accent); }';
+  var sn=$('shareNote');if(sn)sn.textContent=us.length?'This link uses your own font, so it only looks right in a browser where you added that font.':'';
+  $('codeCss').textContent=faces+':root {\n  --font-heading: '+stack(h)+';\n  --font-body: '+stack(b)+';\n  --color-bg: '+S.bg+';\n  --color-text: '+S.fg+';\n  --color-accent: '+S.ac+';\n}\n\nbody {\n  background: var(--color-bg);\n  color: var(--color-text);\n  font-family: var(--font-body);\n  font-weight: '+S.bw+';\n  line-height: '+S.lh+';\n  font-size: '+Math.round(17*S.scale)+'px;\n}\n\nh1, h2, h3 {\n  font-family: var(--font-heading);\n  font-weight: '+S.hw+';\n  letter-spacing: '+S.track+'em;\n  line-height: 1.06;\n}\n\na, .accent { color: var(--color-accent); }';
 }
 
 /* share token: only letters, digits, - and ~ */
@@ -673,14 +904,11 @@ function copy(text,el){
 }
 
 /* wire up */
-fillFontSelect($('hSel'));fillFontSelect($('bSel'));
 $('presets').innerHTML=PRESETS.map(function(p){return '<button class="sw" title="'+p[0]+'" aria-label="'+p[0]+' colors" style="background:'+p[1]+'"><span style="background:'+p[2]+'"></span><i style="background:'+p[3]+'"></i></button>';}).join('');
 Array.prototype.forEach.call($('presets').children,function(btn,i){btn.addEventListener('click',function(){var p=PRESETS[i];S.bg=p[1];S.fg=p[2];S.ac=p[3];render();});});
 $('tabs').innerHTML=TABS.map(function(t){return '<button class="tab" role="tab" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('');
 $('tabs').addEventListener('click',function(e){var t=e.target.closest('.tab');if(!t)return;S.view=t.dataset.v;render();});
 $('tabs').addEventListener('keydown',function(e){if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;var i=TABS.findIndex(function(t){return t[0]===S.view;});i=(i+(e.key==='ArrowRight'?1:TABS.length-1))%TABS.length;S.view=TABS[i][0];render();$('tabs').children[i].focus();});
-$('hSel').addEventListener('change',function(){S.h=this.value;render();});
-$('bSel').addEventListener('change',function(){S.b=this.value;render();});
 $('hwSel').addEventListener('change',function(){S.hw=+this.value;lastText=null;render();});
 $('bwSel').addEventListener('change',function(){S.bw=+this.value;lastText=null;render();});
 $('hLock').addEventListener('click',function(){S.lockH=!S.lockH;render();});
@@ -710,11 +938,20 @@ $('favs').addEventListener('click',function(e){var b=e.target.closest('[data-act
   renderFavs();});
 $('cmpArea').addEventListener('click',function(e){if(e.target.id==='clearCmp'){cmp=[];renderFavs();}});
 
-/* boot: link > last session > defaults */
-var start=null;try{start=parse(location.hash);}catch(e){}
-if(!start)start=parse(sget('typalette.last')||'');
+/* boot: carry over data saved under the old misspelled name */
+['favs','last'].forEach(function(k){if(sget('typalette.'+k)==null){var old=sget('typallete.'+k);if(old!=null)sset('typalette.'+k,old);}});
+/* link > last session > defaults; personal fonts load a moment later */
+var hashTok='',lastTok=sget('typalette.last')||'';
+try{hashTok=location.hash;}catch(e){}
+var start=parse(hashTok)||parse(lastTok);
 if(start)Object.assign(S,start);
 renderFilters();renderLib();render();renderFavs();
+idbAll().then(function(recs){
+  if(!recs.length)return;
+  UFILES=recs;rebuildUser();
+  if(!start){var late=parse(hashTok)||parse(lastTok);if(late)Object.assign(S,late);}
+  render();renderFavs();
+});
 })();
 </script>
 </body>
